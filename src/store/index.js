@@ -48,7 +48,7 @@ export default createStore({
 				name: 'Остапенко Остап Остапович',
 				marks: [5, 5, 5, 5, 5],
 				system: '5-бальна',
-				category: '',
+				category: null,
 				averageMark: null,
 			},
 		],
@@ -92,20 +92,32 @@ export default createStore({
 			const categoryValue = state.selectedCategory;
 
 			let filteredStudents = state.studentsList;
-			if (systemValue && categoryValue) {
-				filteredStudents = filteredStudents.filter((student) => student.system === systemValue && student.category === categoryValue);
-			} else if (systemValue || (systemValue && (categoryValue === "Всі"))) {
+			if (systemValue === "Всі" && categoryValue === "Всі") {
+				// Both "Всі" selected, return the full list
+				return filteredStudents;
+			}
+
+			if (systemValue === "Всі") {
+				// Only systemValue is "Всі"
+				filteredStudents = filteredStudents.filter((student) => student.category === categoryValue);
+				if (systemValue === "Всі" && !categoryValue) {
+					filteredStudents = state.studentsList;
+				}
+			} else if (categoryValue === "Всі") {
+				// Only categoryValue is "Всі"
 				filteredStudents = filteredStudents.filter((student) => student.system === systemValue);
-				console.log(filteredStudents);
-			} else if (categoryValue || (categoryValue && (systemValue === "Всі"))) {
+				if (categoryValue === "Всі" && !systemValue) {
+					filteredStudents = state.studentsList;
+				}
+			} else if (systemValue && categoryValue) {
+				filteredStudents = filteredStudents.filter((student) => student.system === systemValue && student.category === categoryValue);
+			} else if (systemValue && systemValue !== "Всі") {
+				filteredStudents = filteredStudents.filter((student) => student.system === systemValue);
+			} else if (categoryValue && categoryValue !== "Всі") {
 				filteredStudents = filteredStudents.filter((student) => student.category === categoryValue);
 			}
-			else if (!systemValue && !categoryValue) {
-				filteredStudents = state.studentsList
-			}
-			if (systemValue === "Всі" && categoryValue === "Всі") {
-				filteredStudents = state.studentsList
-			} else if (!filteredStudents.length && (systemValue !== "Всі" && categoryValue !== "Всі")) {
+
+			if (!filteredStudents.length) {
 				state.errorMessage = "Немає таких учнів:("
 			} else {
 				state.errorMessage = null
