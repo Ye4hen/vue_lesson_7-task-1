@@ -93,18 +93,15 @@ export default createStore({
 
 			let filteredStudents = state.studentsList;
 			if (systemValue === "Всі" && categoryValue === "Всі") {
-				// Both "Всі" selected, return the full list
 				return filteredStudents;
 			}
 
 			if (systemValue === "Всі") {
-				// Only systemValue is "Всі"
 				filteredStudents = filteredStudents.filter((student) => student.category === categoryValue);
 				if (systemValue === "Всі" && !categoryValue) {
 					filteredStudents = state.studentsList;
 				}
 			} else if (categoryValue === "Всі") {
-				// Only categoryValue is "Всі"
 				filteredStudents = filteredStudents.filter((student) => student.system === systemValue);
 				if (categoryValue === "Всі" && !systemValue) {
 					filteredStudents = state.studentsList;
